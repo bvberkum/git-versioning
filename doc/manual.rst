@@ -40,12 +40,12 @@ Two options per project
       # File-List: .versioned-files.list
       # Other-Files:
 
-::
+Usage examples::
 
   git-versioning check # verify all versions match
   git-versioning dev # apply dev tag
   git-versioning snapshot # apply feature tag
-  git-versioning update #
+  git-versioning update # rewrite embedded versions
   git-versioning check
 
 
@@ -72,4 +72,61 @@ rSt example::
 
   .. Id: git-versioning/0.2.0-dev ReadMe.rst
 
+
+Use cases
+---------
+
+1. files get distributed, and need to be matched to source repository easily
+2. file need access to the project's version (ie. compiled program source code)
+   and such versions need to be updated.
+
+Issues
+------
+
+Only the first match in a version is considered. This for me is a minor issue,
+one I may get to fix later. However, more important to me are some
+considerations with regard to source code versioning.
+
+Without deployment, embedding version strings as file Id's always adds a change.
+SCM systems may not have facilities to ignore lines, and anyway looking at such
+changeset is not informative at all.
+
+In my opinion
+
+1. changes to versions should be left out of the source code and out of version
+   history as much as possible. I think it would be more appropiate to use a
+   placeholder that does not change (as much).
+
+2. when committing a release, the commit may be left out of the default SCM
+   version. On a seperate branch or even without any branch only a commit.
+   Such version could even have a tag to distinguish it from a related version
+   tagged onto the default or main-line branch. This way versions appear on the
+   main line too, which helps to navigate the repository.
+
+That said, having the project version embedded makes some sense to me, and
+having another script to help with copies has some place. For compiled projects,
+it can be more convienient to copy the version rather than add the overhead to
+retrieve them during the build process. For documentation it may not be pretty
+or informative to look at a placeholder. And a build system with documentation
+distribution is not feasible for every project, some may want to try to get as
+much from the SCM system instead, including serving documentation.
+
+..
+
+  TODO: think about some manner of placeholders and match/substitute modes. Ideas::
+
+    # Id: git-versioning/!git-versioning version
+    <!-- Id: git-versioning/${git-versioning.version} doc/manual.rst -->
+    .. Id: git-versioning/{version} doc/manual.rst
+
+    .. {ver-marker}: {app-id}/{version} {path} {date}
+
+    var version = "{version}"; # {app-id} {date}
+    var lib_version = "{lib.version}"; # {app-id.lib}
+
+    {app-id}.version={version}
+
+..
+
+  TODO: see about ChangeLog type checks, to use before release
 
